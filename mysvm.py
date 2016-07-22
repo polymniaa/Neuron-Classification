@@ -8,40 +8,45 @@ Created on Tue Jul 19 08:48:57 2016
 import pandas as pd
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold
-from sklearn.neighbors import KNeighborsClassifier 
+from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix
-import matplotlib.pyplot as plt
- 
+import matplotlib.pyplot as plt 
+from sklearn import preprocessing
+
 data = pd.read_csv('data.csv')
 Y = np.array(data['Type'])
 data = data.drop('Type', 1)
 X = np.array(data, dtype='float')
-X=X / X.sum(axis=0)[np.newaxis, :]
-
+normalizer =  preprocessing.Normalizer()
+X = normalizer.transform(X)
 classes = np.unique(Y)
 
 sss = StratifiedKFold(Y, 10, random_state=0)
 itr = 1
 Ypred = np.zeros(Y.shape, dtype='object')
-"Classification using K Nearest Neighbors"
+'Classification using SVM'
 for train_index, test_index in sss:
-    print "Iter", itr, "TRAIN:", train_index.shape[0], "TEST:", test_index.shape[0],
+    print "Iter", itr, 
     X_train, X_test = X[train_index], X[test_index]
     y_train, y_test = Y[train_index], Y[test_index]
         
-    knn = KNeighborsClassifier(n_neighbors=10, weights= 'distance',metric='manhattan')
-    knn.fit(X_train, y_train)
-    Ypred[test_index] = knn.predict(X_test)
+    
+    clf = SVC(C=1000, kernel='linear', class_weight = None, shrinking=False)
+    clf = clf.fit(X_train, y_train)
+    Ypred[test_index] = clf.predict(X_test)    
+    result = clf.predict(X_train)
+    tr_acc = float(np.sum(y_train==result))/float(y_train.shape[0])
     
     accuracy = float(np.sum(y_test==Ypred[test_index]))/float(y_test.shape[0])
-    print " => Accuracy = ", accuracy
+    print " => Train Accuracy = %.4f, Accuracy = %.4f" % (tr_acc, accuracy)
     itr += 1
 accuracy = float(np.sum(Y==Ypred))/float(Y.shape[0])
-print "Total accuracy = ", accuracy
-print knn
+print "=== Total accuracy = ", accuracy, ' ==='
+print ''
+print clf
 cm = confusion_matrix(Y, Ypred, labels=classes)
 print cm
-print knn
+print clf
 
 def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
@@ -56,4 +61,4 @@ def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
 
 cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 plt.figure()
-plot_confusion_matrix(cm_normalized, title='Normalized confusion matrix')
+plot_confusion_matrix(cm_normalized, title='Normalized confusion matrix')    
