@@ -5,53 +5,61 @@ Created on Tue Jul 19 16:04:43 2016
 @author: sarun
 """
 
+import os
 import pandas as pd
 import numpy as np
 from sklearn.cross_validation import StratifiedKFold
-from sklearn.linear_model import LogisticRegression
- 
+from weka.classifiers import Classifier
+import weka.core.jvm as jvm
+from weka.core.converters import Loader
+
+
+from np2arff import write_to_weka
+
+jvm.start(max_heap_size="1024m")
+
 data = pd.read_csv('data.csv')
 Y = np.array(data['Type'])
-data = data.drop('Type', 1)
-X = np.array(data, dtype='float')
+X = np.array(data)
+X[:, 0:-1] = X[:, 0:-1] - np.mean(X[:, 0:-1], axis=0)[np.newaxis, :]
+X[:, 0:-1] = X[:, 0:-1] / np.var(X[:, 0:-1], axis=0)[np.newaxis, :]
 
-import weka.core.jvm as jvm
-jvm.start()
+classes = np.unique(Y)
 
-from weka.core.converters import Loader
-loader = Loader(classname="weka.core.converters.ArffLoader")
-data = loader.load_file("data.arff")
-data.class_is_last()
+sss = StratifiedKFold(Y, 10, random_state=0)
+itr = 1
+Ypred = np.zeros(Y.shape, dtype='object')
+print "Classification using K Nearest Neighbors"
+for train_index, test_index in sss:
+    print "Iter", itr,
+    X_train, X_test = X[train_index], X[test_index]
+    X_test[:,-1] = classes[0]       # make sure test classes is removed
+    y_test = Y[test_index]
+    write_to_weka('train.arff', 'training_data', data.columns, X_train, classes)
+    write_to_weka('test.arff', 'testing_data', data.columns, X_test, classes)
 
-from weka.core.dataset import Instances
-import weka.core.converters
-#from weka.classifiers import Classifier
-#cls = Classifier(classname="weka.classifiers.laze.IBk")
-#cls.options = ["-K", "10", "-W", "0"]
-#print(cls.to_help())
-#
-#for index, inst in enumerate(data):
-#    pred = cls.classify_instance(inst)
-#    dist = cls.distribution_for_instance(inst)
-#    print(str(index+1) + ": label index=" + str(pred) + ", class distribution=" + str(dist))
+    loader = Loader(classname="weka.core.converters.ArffLoader")
+    trdata = loader.load_file("train.arff")
+    trdata.class_is_last()
 
-from weka.classifiers import Classifier, Evaluation
-from weka.core.classes import Random
-#classifier = Classifier(classname="weka.classifiers.lazy.IBk", options=["-K", "10", "-W", "0", "-I"])
-classifier = Classifier(classname="weka.classifiers.lazy.IBk")
-classifier.options = ["-K", "10", "-W", "0", "-I", "-A", "weka.core.neighboursearch.LinearNNSearch -A \"weka.core.ManhattanDistance -R first-last\""]
-evaluation = Evaluation(data)                     # initialize with priors
-evaluation.crossvalidate_model(classifier, data, 10, Random(42))  # 10-fold CV
-print(evaluation.summary())
-print("pctCorrect: " + str(evaluation.percent_correct))
-print("incorrect: " + str(evaluation.incorrect))
+    classifier = Classifier(classname="weka.classifiers.lazy.IBk")
+    classifier.options = ["-K", "10", "-W", "0", "-I", "-A",
+                          "weka.core.neighboursearch.LinearNNSearch -A \"weka.core.ManhattanDistance -R first-last\""]
+    classifier.build_classifier(trdata)
 
-#cls = Classifier(classname="weka.classifiers.trees.J48", options=["-C", "0.3"])
-#cls.build_classifier(data)
-#preds = np.zeros()
-#for index, inst in enumerate(data):
-#    pred = cls.classify_instance(inst)
-#    dist = cls.distribution_for_instance(inst)
-#    print(str(index+1) + ": label index=" + str(pred) + ", class distribution=" + str(dist))
+    tedata = loader.load_file("test.arff")
+    tedata.class_is_last()
 
+    for index, inst in enumerate(tedata):
+        result = classifier.classify_instance(inst)
+        Ypred[test_index[index]] = classes[int(result)]
+
+    accuracy = float(np.sum(y_test == Ypred[test_index])) / float(y_test.shape[0])
+    print " => Accuracy = ", accuracy
+    itr += 1
+accuracy = float(np.sum(Y == Ypred)) / float(Y.shape[0])
+print "Total accuracy = ", accuracy
+
+os.remove('train.arff')
+os.remove('test.arff')
 jvm.stop()
