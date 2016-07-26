@@ -16,12 +16,13 @@ data = pd.read_csv('data.csv')
 Y = np.array(data['Type'])
 data = data.drop('Type', 1)
 X = np.array(data, dtype='float')
-X=X / X.sum(axis=0)[np.newaxis, :]
+X = X / X.sum(axis=0)[np.newaxis, :]
 
 classes = np.unique(Y)
 
 sss = StratifiedKFold(Y, 10, random_state=0)
 itr = 1
+
 Ypred = np.zeros(Y.shape, dtype='object')
 "Classification using K Nearest Neighbors"
 for train_index, test_index in sss:

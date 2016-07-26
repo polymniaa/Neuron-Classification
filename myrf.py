@@ -28,7 +28,7 @@ for train_index, test_index in sss:
     y_train, y_test = Y[train_index], Y[test_index]
         
     #clf = tree.DecisionTreeClassifier(max_depth=1)
-    clf = RandomForestClassifier(n_estimators=250, max_depth=None, bootstrap=False, class_weight="balanced", n_jobs=4)
+    clf = RandomForestClassifier(n_estimators=300, max_depth=30, bootstrap=False, min_samples_split = 10, class_weight="balanced")
     clf = clf.fit(X_train, y_train)
     Ypred[test_index] = clf.predict(X_test)    
     result = clf.predict(X_train)
