@@ -12,26 +12,34 @@ from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt 
 from sklearn import preprocessing
+from sklearn.decomposition import PCA
 
 data = pd.read_csv('data.csv')
 Y = np.array(data['Type'])
 data = data.drop('Type', 1)
+
 X = np.array(data, dtype='float')
 normalizer =  preprocessing.Normalizer()
 X = normalizer.transform(X)
+
+pca = PCA(n_components=0.95)        
+X = pca.fit_transform(X)
+#X = np.hstack((X, Xpca))
+
 classes = np.unique(Y)
 
 sss = StratifiedKFold(Y, 10, random_state=0)
 itr = 1
 Ypred = np.zeros(Y.shape, dtype='object')
-'Classification using SVM'
+print 'Classification using SVM'
 for train_index, test_index in sss:
     print "Iter", itr, 
     X_train, X_test = X[train_index], X[test_index]
     y_train, y_test = Y[train_index], Y[test_index]
         
     
-    clf = SVC(C=1000, kernel='linear', class_weight = None, shrinking=False)
+    clf = SVC(C=5000)
+    #clf = SVC(C=1000, kernel='poly', degree=13, coef0=3)
     clf = clf.fit(X_train, y_train)
     Ypred[test_index] = clf.predict(X_test)    
     result = clf.predict(X_train)

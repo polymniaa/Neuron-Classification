@@ -29,7 +29,7 @@ for train_index, test_index in sss:
     X_train, X_test = X[train_index], X[test_index]
     y_train, y_test = Y[train_index], Y[test_index]
         
-    clf = tree.DecisionTreeClassifier(max_depth=10, splitter='best', min_samples_split=81,)
+    clf = tree.DecisionTreeClassifier(max_depth=10, splitter='best', min_samples_split=81)
     clf = clf.fit(X_train, y_train)
     Ypred[test_index] = clf.predict(X_test)
     result = clf.predict(X_train)

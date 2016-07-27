@@ -11,6 +11,8 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier 
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt 
+#from sklearn.feature_selection import chi2
+#from sklearn.feature_selection import SelectKBest
 
 data = pd.read_csv('data.csv')
 Y = np.array(data['Type'])
@@ -27,16 +29,19 @@ for train_index, test_index in sss:
     X_train, X_test = X[train_index], X[test_index]
     y_train, y_test = Y[train_index], Y[test_index]
         
-    #clf = tree.DecisionTreeClassifier(max_depth=1)
-    clf = RandomForestClassifier(n_estimators=300, max_depth=30, bootstrap=False, min_samples_split = 10, class_weight="balanced")
+   # X_new = SelectKBest(chi2, k=2).fit_transform(X_train, y_train)
+    
+    clf = RandomForestClassifier(n_estimators=300, max_depth=30, bootstrap=False, class_weight="balanced", min_samples_split = 10, max_features = 'log2', min_samples_leaf=2)
     clf = clf.fit(X_train, y_train)
+        
     Ypred[test_index] = clf.predict(X_test)    
     result = clf.predict(X_train)
     tr_acc = float(np.sum(y_train==result))/float(y_train.shape[0])
-    
+        
     accuracy = float(np.sum(y_test==Ypred[test_index]))/float(y_test.shape[0])
     print " => Train Accuracy = %.4f, Accuracy = %.4f" % (tr_acc, accuracy)
     itr += 1
+
 accuracy = float(np.sum(Y==Ypred))/float(Y.shape[0])
 print "=== Total accuracy = ", accuracy, ' ==='
 print ''

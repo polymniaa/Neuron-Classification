@@ -11,11 +11,14 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt 
+from sklearn import preprocessing
 
 data = pd.read_csv('data.csv')
 Y = np.array(data['Type'])
 data = data.drop('Type', 1)
 X = np.array(data, dtype='float')
+normalizer =  preprocessing.Normalizer()
+X = normalizer.transform(X)
 classes = np.unique(Y)
 
 sss = StratifiedKFold(Y, 10, random_state=0)
@@ -35,7 +38,7 @@ for train_index, test_index in sss:
             learning_rate='invscaling',
             power_t=0.5,
             alpha=1e-5, hidden_layer_sizes=(100,), random_state=1,
-            verbose=True)   
+            verbose=False)   
     clf = clf.fit(X_train, y_train)
     Ypred[test_index] = clf.predict(X_test)    
     result = clf.predict(X_train)
