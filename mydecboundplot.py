@@ -21,23 +21,44 @@ def plot_mydecisionbound(X, Y, ind, clf, title="Decision Boundary"):
     le = preprocessing.LabelEncoder()
     le.fit(Y)
     
-    x_min, x_max = X[:, 0].min() - 0.00001, X[:, 0].max() + 0.00001
-    y_min, y_max = X[:, 1].min() - 0.00001, X[:, 1].max() + 0.00001
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.0002),
-                         np.arange(y_min, y_max, 0.0002))
+    x_min, x_max = X[:, 0].min(), X[:, 0].max()
+    x_gap = (x_max - x_min) / 10
+    x_min = x_min - x_gap
+    x_max = x_max + x_gap
+    y_min, y_max = X[:, 1].min(), X[:, 1].max()
+    y_gap = (y_max - y_min) / 10
+    y_min = y_min - y_gap
+    y_max = y_max + y_gap
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, x_gap/5),
+                         np.arange(y_min, y_max, y_gap/5))
     
     plt.figure()
 
     tmp = np.c_[xx.ravel(), yy.ravel()]
     Z = clf.predict(np.dot(tmp, pca.components_))
 
+
+
     # Put the result into a color plot
     Z = le.transform(Z)
     Z = Z.reshape(xx.shape)
-    plt.contourf(xx, yy, Z, cmap=plt.cm.Paired, alpha=0.8)
-
+    
     # Plot also the training points
-    plt.scatter(X[:, 0], X[:, 1], c=le.transform(Y), cmap=plt.cm.Paired)
+    colors = ['r','b','y','k','c','m','g','0.75','#4C72B0']
+    handlers = []
+    Ynum = le.transform(Y)
+    CS4 = plt.contourf(xx, yy, Z,color=colors, alpha=0.4)
+    
+    for i in range(9):
+        handlers.append(plt.scatter(X[Ynum==i, 0], X[Ynum==i, 1], color=colors[i]))
+        
+    plt.legend(tuple(handlers),
+       tuple(classes.tolist()),
+       scatterpoints=1,
+       loc='lower left',
+       ncol=3,
+       fontsize=8)
+    #plt.scatter(X[:, 0], X[:, 1], c=le.transform(Y), cmap=plt.cm.Paired)
     plt.xlabel('')
     plt.ylabel('')
     plt.xlim(xx.min(), xx.max())
@@ -45,8 +66,11 @@ def plot_mydecisionbound(X, Y, ind, clf, title="Decision Boundary"):
     plt.xticks(())
     plt.yticks(())
     plt.title(title)
+        
     
-    plt.show()
+    plt.show()   
+        
+
 
 
 if __name__ == "__main__":
@@ -70,3 +94,6 @@ if __name__ == "__main__":
     clf = KNeighborsClassifierknn = KNeighborsClassifier(n_neighbors=5, weights= 'distance', metric='manhattan')
     clf = clf.fit(X_train, y_train)
     plot_mydecisionbound(X, Y, test_index, clf)
+    
+    
+  
