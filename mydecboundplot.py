@@ -14,13 +14,15 @@ from sklearn.cross_validation import StratifiedKFold
 from sklearn import preprocessing
 
 def plot_mydecisionbound(X, Y, ind, clf, title="Decision Boundary"):
+    # convert data into 2D
     pca = PCA(n_components=2) 
-    X = pca.fit_transform(X)    
-    
-   
+    X = pca.fit_transform(X)  
+    X = X[ind]
+    # convert labels into number
     le = preprocessing.LabelEncoder()
     le.fit(Y)
-    
+    Y = le.transform(Y)
+    # generate grid
     x_min, x_max = X[:, 0].min(), X[:, 0].max()
     x_gap = (x_max - x_min) / 10
     x_min = x_min - x_gap
@@ -29,47 +31,47 @@ def plot_mydecisionbound(X, Y, ind, clf, title="Decision Boundary"):
     y_gap = (y_max - y_min) / 10
     y_min = y_min - y_gap
     y_max = y_max + y_gap
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, x_gap/5),
-                         np.arange(y_min, y_max, y_gap/5))
-    
-    plt.figure()
-
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, x_gap/50),
+                         np.arange(y_min, y_max, y_gap/50))
     tmp = np.c_[xx.ravel(), yy.ravel()]
+    # get decision image
     Z = clf.predict(np.dot(tmp, pca.components_))
-
-
-
-    # Put the result into a color plot
     Z = le.transform(Z)
     Z = Z.reshape(xx.shape)
+
+    # color of each cell type    
+    col = [(0.00,0.45,0.74),
+           (0.85,0.33,0.10),
+           (0.93,0.69,0.13),
+           (0.49,0.18,0.56),
+           (0.47,0.67,0.19),
+           (0.30,0.75,0.93),
+           (0.64,0.08,0.18),
+           (1.0,0.5,0.75),
+           (0.0,1.0,0.75)]
     
-    # Plot also the training points
-    colors = ['r','b','y','k','c','m','g','0.75','#4C72B0']
+    
+    # plot
+    plt.figure()
+    plt.contourf(xx, yy, Z, levels=np.arange(-0.5,9.5), 
+                       colors=col, alpha=0.1)
     handlers = []
-    Ynum = le.transform(Y)
-    CS4 = plt.contourf(xx, yy, Z,color=colors, alpha=0.4)
-    
-    for i in range(9):
-        handlers.append(plt.scatter(X[Ynum==i, 0], X[Ynum==i, 1], color=colors[i]))
-        
+    for i in range(len(le.classes_)):
+        idx = Y[ind] == i
+        handlers.append(plt.scatter(X[idx, 0], X[idx, 1], edgecolor='black', 
+                                    linewidth='1', facecolor=col[i]))
     plt.legend(tuple(handlers),
-       tuple(classes.tolist()),
+       tuple(le.classes_.tolist()),
        scatterpoints=1,
-       loc='lower left',
-       ncol=3,
+       loc=0,
        fontsize=8)
-    #plt.scatter(X[:, 0], X[:, 1], c=le.transform(Y), cmap=plt.cm.Paired)
-    plt.xlabel('')
-    plt.ylabel('')
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.xticks(())
     plt.yticks(())
     plt.title(title)
-        
-    
-    plt.show()   
-        
+    plt.tight_layout()
+    plt.show()
 
 
 
@@ -82,6 +84,8 @@ if __name__ == "__main__":
     normalizer =  preprocessing.Normalizer()
     X = normalizer.transform(X)
     #X = X / X.sum(axis=0)[np.newaxis, :]
+    #X = X[1:3000]
+    #Y = Y[1:3000]
     
     sss = StratifiedKFold(Y, 10, random_state=0)
     itr = 1
