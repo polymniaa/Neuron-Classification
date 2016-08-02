@@ -32,7 +32,7 @@
 \date{}
 
 % Make title bold and 14 pt font (Latex default is non-bold, 16pt) 
-\title{\Large\bf My Wonderful Report in IEEE Format}
+\title{\Large\bf Classification of neurons of Drosophila using varying methods and feature engineering }
 
 % For single author (just remove % characters)
 %\author{I. M. Anonymous \\
@@ -55,13 +55,7 @@ I. M. Anonymous  & M. Y. Coauthor \\
 \section*{\centering Abstract}
 
 {\em
-This is the abstract of my paper.  It must fit within the 
-size allowed, which is about 3 inches, including section 
-title, which is 11 point bold font.  If you don't want 
-the text in italics, simply remove the `em' command and 
-the curly braces which bound the abstract text.  If you 
-have em commands within an italicized abstract, the text 
-will come out as normal (non-italicized) text. 
+Classification of data through the use of automated systems is wildly used in the scientific community, as it is a faster and more efficient way of arranging datasets than doing so manually. There are many classification methods, the efficiency of each depending on the dataset it works on and how the method is used.  In addition, the idea of feature selection was also visited during this project. The goal of this project was to test classification and feature selection methods. To reach this goal a main focus was observing the accuracies of these methods as their parameters were changed.
 %end italics mode
 }
 
@@ -90,9 +84,88 @@ have to run the latex process twice to allow all references to be
 resolved. You will get a warning about a missing .aux file.  Just
 rerun latex and it will be ok (fig. \ref{fig:chi2}).
 
-\Section{Method}
+\Section{Methods}
+With the goal being to test certain methods and achieve the highest accuracy possible, we adjusted the code to make it more efficient. After receiving the data, we stored the known class of each neuron in a separate variable. This allowed us to, following the automatic classification, compare the class that the classifier assigned each neuron to versus the actual one. The classifiers we tested were K-Nearest Neighbors, Decision Tree, Random Forest, Logistic Regression, Support Vector Machine and Ensemble.
+
+
+
+
+
 
 \Section{Results}
+
+The format of the output remained the same for all six, printing out the accuracy of each iteration, the total accuracy, the name of the classifier as well as all its parameters, and finally a confusion matrix as a visual for the results. 
+
+\begin{center}
+	\begin{tabular}{||c c c c||} 
+		\hline
+		Method Name & Total Accuracy \\ [0.5ex] 
+		\hline\hline
+		Random Forest & 0.6803 \\ 
+		\hline
+		K-Nearest Neighbors & 0.6509 \\
+		\hline
+		Ensemble & 0.6741 \\
+		\hline
+		Decision Tree & 0.5799 \\
+		\hline
+		Logistic Regression & 0.5355 \\ 
+		\hline
+		Support Vector Machine & 0.5341 \\ [1ex] 
+		\hline
+	\end{tabular}
+\end{center}
+
+
+
+
+
+
+\begin{figure}[htbp] 
+	\begin{minipage}{0.5\linewidth} 
+		\centering 
+		\includegraphics[width=\textwidth]{img/RFmatrix.png} 
+		\caption{A Circle} 
+		\label{fig:circle} 
+	\end{minipage}% 
+	\begin{minipage}{0.5\linewidth} 
+		\centering 
+		\includegraphics[width=\textwidth]{img/KNNmatrix.png}
+		\caption{A Rectangle} 
+		\label{fig:rectangle} 
+	 \end{minipage}
+\end{figure}
+
+\begin{figure}[htbp] 
+	\begin{minipage}{0.5\linewidth} 
+		\centering 
+		\includegraphics[width=\textwidth]{img/LGmatrix.png} 
+		\caption{A Circle} 
+		\label{fig:circle} 
+	\end{minipage}% 
+	\begin{minipage}{0.5\linewidth} 
+		\centering 
+		\includegraphics[width=\textwidth]{img/SVMmatrix.png}
+		\caption{A Rectangle} 
+		\label{fig:rectangle} 
+	\end{minipage}
+\end{figure}	
+
+\begin{figure}[htbp] 
+	\begin{minipage}{0.5\linewidth} 
+		\centering 
+		\includegraphics[width=\textwidth]{img/DTmatrix.png} 
+		\caption{A Circle} 
+		\label{fig:circle} 
+	\end{minipage}% 
+	\begin{minipage}{0.5\linewidth} 
+		\centering 
+		\includegraphics[width=\textwidth]{img/ENSEMBLEmatrix.png}
+		\caption{A Rectangle} 
+		\label{fig:rectangle} 
+	\end{minipage}
+\end{figure}	
+
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=0.5\textwidth]{img/test_fig.png}
