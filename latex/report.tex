@@ -5,6 +5,7 @@
 \documentclass[10pt,twocolumn]{article}
 \usepackage{times}
 \usepackage{graphicx}
+\usepackage{tabularx}
 
 % Use following instead for LaTex 2.09 (may need some other mods as well).
 % \documentstyle[times,twocolumn]{article}
@@ -42,11 +43,11 @@
 
 % For two authors (default example)
 \author{\begin{tabular}[t]{c@{\extracolsep{8em}}c} 
-I. M. Anonymous  & M. Y. Coauthor \\
+Polymnia Nicolaou  & M. Y. Coauthor \\
  \\
         My Department & Coauthor Department \\
-        My Institute & Coauthor Institute \\
-        City, STATE~~zipcode & City, STATE~~zipcode
+        Carmel High School & Coauthor Institute \\
+        Carmel, IN~~46074 & City, STATE~~zipcode
 \end{tabular}}
 
 \maketitle
@@ -84,9 +85,9 @@ have to run the latex process twice to allow all references to be
 resolved. You will get a warning about a missing .aux file.  Just
 rerun latex and it will be ok (fig. \ref{fig:chi2}).
 
-\Section{Methods}
-With the goal being to test certain methods and achieve the highest accuracy possible, we adjusted the code to make it more efficient. After receiving the data, we stored the known class of each neuron in a separate variable. This allowed us to, following the automatic classification, compare the class that the classifier assigned each neuron to versus the actual one. The classifiers we tested were K-Nearest Neighbors, Decision Tree, Random Forest, Logistic Regression, Support Vector Machine and Ensemble.
-
+\Section{Process and Methods}
+With the goal being to test certain methods and achieve the highest accuracy possible, we adjusted the code to make it more efficient. After receiving the data, we stored the given class of each neuron in a separate variable for future reference. The classifiers we focused on were K-Nearest Neighbors, Decision Tree, Random Forest, Logistic Regression, Support Vector Machine and Ensemble. 
+K-Nearest Neighbors assigns the unknown neuron 
 
 
 
@@ -97,75 +98,95 @@ With the goal being to test certain methods and achieve the highest accuracy pos
 The format of the output remained the same for all six, printing out the accuracy of each iteration, the total accuracy, the name of the classifier as well as all its parameters, and finally a confusion matrix as a visual for the results. 
 
 \begin{center}
-	\begin{tabular}{||c c c c||} 
-		\hline
-		Method Name & Total Accuracy \\ [0.5ex] 
-		\hline\hline
-		Random Forest & 0.6803 \\ 
-		\hline
-		K-Nearest Neighbors & 0.6509 \\
-		\hline
-		Ensemble & 0.6741 \\
-		\hline
-		Decision Tree & 0.5799 \\
-		\hline
-		Logistic Regression & 0.5355 \\ 
-		\hline
-		Support Vector Machine & 0.5341 \\ [1ex] 
-		\hline
-	\end{tabular}
+		\begin{tabularx}{0.4\textwidth}{|X|c|} 
+			\hline
+			Method Name & Total Accuracy \\ 
+			\hline\hline
+			Random Forest & 0.6803 \\ 
+			\hline
+			K-Nearest Neighbors & 0.6509 \\
+			\hline
+			Ensemble & 0.6741 \\
+			\hline
+			Decision Tree & 0.5799 \\
+			\hline
+			Logistic Regression & 0.5355 \\ 
+			\hline
+			Support Vector Machine & 0.5341 \\ 
+			\hline
+		\end{tabularx}
 \end{center}
+
 
 \begin{figure}[htbp] 
 	\begin{minipage}{0.5\linewidth} 
 		\centering 
 		\includegraphics[width=\textwidth]{img/RFmatrix.png} 
-		\caption{A Circle} 
-		\label{fig:circle} 
+		\caption{RF Classification} 
+		\label{fig:RFmat} 
 	\end{minipage}% 
 	\begin{minipage}{0.5\linewidth} 
 		\centering 
 		\includegraphics[width=\textwidth]{img/KNNmatrix.png}
-		\caption{A Rectangle} 
-		\label{fig:rectangle} 
+		\caption{KNN Classification} 
+		\label{fig:KNNmat} 
 	 \end{minipage}
 \end{figure}
+
 
 \begin{figure}[htbp] 
 	\begin{minipage}{0.5\linewidth} 
 		\centering 
 		\includegraphics[width=\textwidth]{img/LGmatrix.png} 
-		\caption{A Circle} 
-		\label{fig:circle} 
+		\caption{LR Classification} 
+		\label{fig:LRmat} 
 	\end{minipage}% 
 	\begin{minipage}{0.5\linewidth} 
 		\centering 
 		\includegraphics[width=\textwidth]{img/SVMmatrix.png}
-		\caption{A Rectangle} 
-		\label{fig:rectangle} 
+		\caption{SVM Classification} 
+		\label{fig:SVMmat} 
 	\end{minipage}
 \end{figure}	
+
 
 \begin{figure}[htbp] 
 	\begin{minipage}{0.5\linewidth} 
 		\centering 
 		\includegraphics[width=\textwidth]{img/DTmatrix.png} 
-		\caption{A Circle} 
-		\label{fig:circle} 
+		\caption{DT Classification} 
+		\label{fig:DTmat} 
 	\end{minipage}% 
 	\begin{minipage}{0.5\linewidth} 
 		\centering 
 		\includegraphics[width=\textwidth]{img/ENSEMBLEmatrix.png}
-		\caption{A Rectangle} 
-		\label{fig:rectangle} 
+		\caption{Ensemble Classification} 
+		\label{fig:ENmat} 
 	\end{minipage}
 \end{figure}	
 
+
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=0.5\textwidth]{img/test_fig.png}
+	\includegraphics[width=0.5\textwidth]{img/chi2Feature.png}
 	\caption{Figure something}
 	\label{fig:chi2}
+\end{figure}
+
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{img/rfFeature.png}
+	\caption{}
+	\label{fig:RF}
+\end{figure}
+
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{img/pcaFeature.png}
+	\caption{Best Feature according to PCA}
+	\label{fig:PCA}
 \end{figure}
 
 \Section{Summary and Conclusions}
